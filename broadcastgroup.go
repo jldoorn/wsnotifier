@@ -1,6 +1,6 @@
 package wsnotifier
 
-type Hub struct {
+type BroadcastGroup struct {
 	clients    map[*Client]bool
 	broadcast  chan interface{}
 	register   chan *Client
@@ -8,8 +8,8 @@ type Hub struct {
 	stop       chan bool
 }
 
-func newHub() *Hub {
-	return &Hub{
+func newBroadcastGroup() *BroadcastGroup {
+	return &BroadcastGroup{
 		broadcast:  make(chan interface{}),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
@@ -18,7 +18,7 @@ func newHub() *Hub {
 	}
 }
 
-func (h *Hub) run() {
+func (h *BroadcastGroup) run() {
 	for {
 		select {
 		case client := <-h.register:

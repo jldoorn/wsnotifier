@@ -23,7 +23,7 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	hub *Hub
+	hub *BroadcastGroup
 
 	conn     *websocket.Conn
 	sendJson chan interface{}
@@ -91,7 +91,7 @@ func (c *Client) writePump() {
 	}
 }
 
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func serveWs(hub *BroadcastGroup, w http.ResponseWriter, r *http.Request) {
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
