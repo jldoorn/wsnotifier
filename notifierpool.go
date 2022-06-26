@@ -38,6 +38,12 @@ func (p *NotifierPool) SubscribeClient(id string, w http.ResponseWriter, r *http
 	serveWs(p.hubs[id], w, r)
 }
 
+func (p *NotifierPool) ClientHandler(id string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		serveWs(p.hubs[id], w, r)
+	}
+}
+
 // RemoveBroadcast ends all client websocket connections from a
 // BroadcastGroup and removes the BroadcastGroup tagged by an id
 // from the NotifierPool.
