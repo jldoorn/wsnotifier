@@ -21,6 +21,9 @@ func NewNotifierPool() *NotifierPool {
 // AddBroadcast adds a broadcast group to the NotifierPool
 // tagged by an id. The id should be unique among all broadcast
 // groups and must be maintained to send messages at the group
+//
+// notifyIfEmpty is a channel that will recieve a notification when a client
+// disconnects and was the last client in the room
 func (p *NotifierPool) AddBroadcast(id string, notifyIfEmpty chan<- bool) {
 	p.hubs[id] = newBroadcastGroup(notifyIfEmpty)
 	go p.hubs[id].run()
