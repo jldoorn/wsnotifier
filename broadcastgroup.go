@@ -1,20 +1,22 @@
 package wsnotifier
 
 type BroadcastGroup struct {
-	clients    map[*Client]bool
-	broadcast  chan interface{}
-	register   chan *Client
-	unregister chan *Client
-	stop       chan bool
+	clients         map[*Client]bool
+	broadcast       chan interface{}
+	register        chan *Client
+	unregister      chan *Client
+	stop            chan bool
+	notifyPoolEmpty chan<- bool
 }
 
-func newBroadcastGroup() *BroadcastGroup {
+func newBroadcastGroup(notifyEmpty chan<- bool) *BroadcastGroup {
 	return &BroadcastGroup{
-		broadcast:  make(chan interface{}),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
-		stop:       make(chan bool),
+		broadcast:       make(chan interface{}),
+		register:        make(chan *Client),
+		unregister:      make(chan *Client),
+		clients:         make(map[*Client]bool),
+		stop:            make(chan bool),
+		notifyPoolEmpty: notifyEmpty,
 	}
 }
 
@@ -27,6 +29,9 @@ func (h *BroadcastGroup) run() {
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
 				close(client.sendJson)
+			}
+			if len(h.clients) == 0 && h.notifyPoolEmpty != nil {
+				h.notifyPoolEmpty <- true
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {

@@ -32,14 +32,14 @@ func setupServer(handler http.HandlerFunc) *http.Server {
 
 func TestNotifierCreate(t *testing.T) {
 	p := NewNotifierPool()
-	p.AddBroadcast("hi")
+	p.AddBroadcast("hi", nil)
 
 	p.RemoveBroadcast("hi")
 }
 
 func TestClientBroadcast(t *testing.T) {
 	p := NewNotifierPool()
-	p.AddBroadcast("hi")
+	p.AddBroadcast("hi", nil)
 	srv := setupServer(p.ClientHandler("hi"))
 
 	u := url.URL{Scheme: "ws", Host: "localhost:3000", Path: "/ws"}

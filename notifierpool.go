@@ -21,8 +21,8 @@ func NewNotifierPool() *NotifierPool {
 // AddBroadcast adds a broadcast group to the NotifierPool
 // tagged by an id. The id should be unique among all broadcast
 // groups and must be maintained to send messages at the group
-func (p *NotifierPool) AddBroadcast(id string) {
-	p.hubs[id] = newBroadcastGroup()
+func (p *NotifierPool) AddBroadcast(id string, notifyIfEmpty chan<- bool) {
+	p.hubs[id] = newBroadcastGroup(notifyIfEmpty)
 	go p.hubs[id].run()
 }
 
